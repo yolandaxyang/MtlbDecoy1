@@ -7,9 +7,7 @@
 *.mdlp -crlf -diff -merge
 *.slxp -crlf -diff -merge
 *.sldd -crlf -diff -merge
-*.mexa64 -crlf -diff -merge
-*.mexw64 -crlf -diff -merge
-*.mexmaci64 -crlf -diff -merge
+*.mex* binary
 *.xlsx -crlf -diff -merge
 *.docx -crlf -diff -merge
 *.pdf -crlf -diff -merge
