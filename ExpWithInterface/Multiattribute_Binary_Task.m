@@ -66,7 +66,7 @@ for t = 1:n;
     
 
     
-    Screen('TextSize', mainwin, 15);
+    Screen('TextSize', mainwin, 20);
     textLeft = ['Power : ' str_obj1_attr1 '\nQuality : ' str_obj1_attr2 '\nPress Left'];
     textRight = ['Power : ' str_obj2_attr1 '\nQuality : ' str_obj2_attr2 '\nPress Right'];
     [nx, ny, bbox] = DrawFormattedText(mainwin,textLeft, 'center', 'center', 0, [], [], [], [1.5], [],leftRect);
