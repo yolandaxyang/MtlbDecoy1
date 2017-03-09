@@ -1,35 +1,22 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Experimental parameters
-clear all;
-rand('state', sum(100*clock));
-Screen('Preference', 'SkipSyncTests', 1);
+%Textboxes sizes and position
+hShiftFromCenter = 400;
+rectWidth = 200;
+rectHeight = 200;
+leftRect = [center - [hShiftFromCenter+(rectWidth/2) (rectHeight/2)], center - [hShiftFromCenter-(rectWidth/2) (-rectHeight/2)]];
+rightRect = [center + [hShiftFromCenter+(rectWidth/2) (rectHeight/2)], center + [hShiftFromCenter-(rectWidth/2) (-rectHeight/2)]];
+centerRect = [center - [(rectWidth/2) (rectHeight/2)], center + [(rectWidth/2) (rectHeight/2)]];
 
-ErrorDelay=1; interTrialInterval = .5; n = 20;  %NB: n here stands for total number of trials and t is used for each individual trial. So there are 1:n trials t.
-Debug = 1;
-
-KbName('UnifyKeyNames');
-LeftKey=KbName('LeftArrow'); UpKey=KbName('UpArrow'); RightKey = KbName('RightArrow');
-spaceKey = KbName('space'); escKey = KbName('ESCAPE');
-% corrkey = [37,38,39]; % left up and right arrow, I dont actually know if this bit of code is necessary.
-gray = [127 127 127 ]; white = [ 255 255 255]; black = [ 0 0 0];
-bgcolor = white; textcolor = black;
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Screen parameters
-[mainwin, screenrect] =  Screen(0, 'OpenWindow');
-Screen('FillRect', mainwin, bgcolor);
-%screenrect = Screen('Rect', 1);
-center = [screenrect(3)/2 screenrect(4)/2];
-Screen(mainwin, 'Flip');
-screens = Screen('Screens');
-screenNumber = max(screens);
+Screen('TextSize', mainwin, 25);
+[nx, ny, bbox] = DrawFormattedText(mainwin,'Loading', 'center', 'center', 0, [], [], [], [1.5], [],centerRect);
+Screen('Flip',mainwin);
 
 %Listz 
 Titles = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
 Ratings = {'1', '1.5', '2', '2.5', '3', '3.5', '4', '4.5', '5'};
 money = [1 2 3 4 5 6 7 8 9 10];
 
-
+Chosen = [];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Draw 1024 particles from prior
@@ -75,20 +62,20 @@ for t = 1:n;
     str_obj2_attr1 = num2str(x2(1));
     str_obj1_attr2 = num2str(x1(2));
     str_obj2_attr2 = num2str(x2(2));
+    
+    
 
     
-    Screen('TextSize', mainwin, 25);
-    Screen('DrawText',mainwin,'Press Left',center(1)-400,center(2)-100,textcolor);
-    Screen('DrawText',mainwin,['Power : ' str_obj1_attr1],center(1)-400,center(2)-250,textcolor);
-    Screen('DrawText',mainwin,['Quality : ' str_obj1_attr2],center(1)-400,center(2)-200,textcolor);
-    
-    Screen('TextSize', mainwin, 25);
-    Screen('DrawText',mainwin,'Press Right',center(1)+400,center(2)-100,textcolor);
-    Screen('DrawText',mainwin,['Power : ' str_obj2_attr1],center(1)+400,center(2)-250,textcolor);
-    Screen('DrawText',mainwin,['Quality : ' str_obj2_attr2],center(1)+400,center(2)-200,textcolor);
+    Screen('TextSize', mainwin, 15);
+    textLeft = ['Power : ' str_obj1_attr1 '\nQuality : ' str_obj1_attr2 '\nPress Left'];
+    textRight = ['Power : ' str_obj2_attr1 '\nQuality : ' str_obj2_attr2 '\nPress Right'];
+    [nx, ny, bbox] = DrawFormattedText(mainwin,textLeft, 'center', 'center', 0, [], [], [], [1.5], [],leftRect);
+    [nx, ny, bbox] = DrawFormattedText(mainwin,textRight, 'center', 'center', 0, [], [], [], [1.5], [],rightRect);
+
     
     if Debug==1
-        Screen('TextSize', mainwin, 25);
+        Screen('FrameRect', mainwin ,[0 0 255],[leftRect;rightRect]',1);
+        Screen('FillOval', mainwin ,[0 0 255],[center-[2 2] center+[2 2]]);
         Screen('DrawText',mainwin,'Debug is on',10,10,textcolor);
         Screen('DrawText',mainwin,['Posterior mean : ' ,num2str(avg_theta(1)),' / ',num2str(avg_theta(2)),' / ',num2str(avg_theta(3)) ],10,40,textcolor);
         Screen('DrawText',mainwin,['Posterior sd : ' ,num2str(sd_theta(1)),' / ',num2str(sd_theta(2)),' / ',num2str(sd_theta(3)) ],10,70,textcolor);
@@ -113,15 +100,13 @@ for t = 1:n;
         [keyIsDown,secs, keyCode] = KbCheck;
         if  keyCode(LeftKey)
             response(t) = 0;
-            chosen(:,t) = [Choice_1_Attr1(t);Choice_1_Attr2(t); 'L'];
-            notchosen(:,t)=[Choice_2_Attr1(t);Choice_2_Attr2(t); 'R'];
+            Chosen(t) = 1;
             respToBeMade = false;
         elseif keyCode(RightKey)
             response(t)= 1;
-            chosen(:,t) = [Choice_2_Attr1(t);Choice_2_Attr2(t); 'R'];
-            notchosen(:,t)=[Choice_1_Attr1(t);Choice_1_Attr2(t); 'L'];
+            Chosen(t) = 2;
             respToBeMade = false;
-        elseif keyCode(KbName('q'))
+        elseif keyCode(escKey)
             sca;
             error('exiting experiment before completion.')
         end
@@ -132,7 +117,7 @@ for t = 1:n;
     end
     
     Screen('TextSize', mainwin, 25);
-    Screen('DrawText',mainwin,'Loading',center(1),center(2),textcolor);
+    [nx, ny, bbox] = DrawFormattedText(mainwin,'Loading', 'center', 'center', 0, [], [], [], [1.5], [],centerRect);
     Screen('Flip',mainwin);
     
     %Compute posterior
@@ -179,3 +164,5 @@ for j=1:20
     end
 end
 scatter(x_indif(:,1),x_indif(:,2),'x')
+save(['data' filesep 'Binary-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'Choice_*','Chosen','time');
+save(['data' filesep 'Theta-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'theta');
