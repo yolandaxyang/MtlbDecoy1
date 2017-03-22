@@ -3,6 +3,10 @@ if(~isdeployed)
   cd(fileparts(which(mfilename)));
 end
 
+if(exist('data')==0)
+   mkdir('data') 
+end
+
 %%Experiment Parameters
 Debug = 1;
 Attribute1Name = 'Sound Quality : ';
