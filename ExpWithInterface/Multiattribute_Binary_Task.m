@@ -19,8 +19,8 @@ money = [1 2 3 4 5 6 7 8 9 10];
 Chosen = [];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Draw 1024 particles from prior
-theta = chi2rnd(4,1024,3); %chi2(1) distributed
+%% Draw 512 particles from prior
+theta = chi2rnd(4,512,3); %chi2(1) distributed
 avg_theta = mean(theta);
 avg_hist = avg_theta;
 sd_theta = std(theta);
@@ -67,8 +67,8 @@ for t = 1:n;
 
     
     Screen('TextSize', mainwin, 20);
-    textLeft = ['Power : ' str_obj1_attr1 '\nQuality : ' str_obj1_attr2 '\nPress Left'];
-    textRight = ['Power : ' str_obj2_attr1 '\nQuality : ' str_obj2_attr2 '\nPress Right'];
+    textLeft = [Attribute1Name  str_obj1_attr1 '\n' Attribute2Name  str_obj1_attr2 '\nPress Left'];
+    textRight = [Attribute1Name  str_obj2_attr1 '\n' Attribute2Name  str_obj2_attr2 '\nPress Right'];
     [nx, ny, bbox] = DrawFormattedText(mainwin,textLeft, 'center', 'center', 0, [], [], [], [1.5], [],leftRect);
     [nx, ny, bbox] = DrawFormattedText(mainwin,textRight, 'center', 'center', 0, [], [], [], [1.5], [],rightRect);
 
@@ -137,12 +137,10 @@ for t = 1:n;
 end
 
     Screen('TextSize', mainwin, 25);
-    Screen('DrawText',mainwin,'Thank you',center(1),center(2),textcolor);
+    Screen('DrawText',mainwin,'Loading',center(1),center(2),textcolor);
     Screen('Flip',mainwin);
     
 
-KbStrokeWait;
-sca;
 save BinaryTask.mat 
 
 %% Compute indif curve for x= [3 6]

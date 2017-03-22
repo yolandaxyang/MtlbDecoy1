@@ -1,7 +1,12 @@
 clear all;
+if(~isdeployed)
+  cd(fileparts(which(mfilename)));
+end
 
 %%Experiment Parameters
 Debug = 1;
+Attribute1Name = 'Sound Quality : ';
+Attribute2Name = 'Loudness : ';
 
 %% Subject info
 %Prompt to enter subject's details, which will later be used in the save
@@ -39,4 +44,5 @@ center = [screenrect(3)/2 screenrect(4)/2];
 ErrorDelay=1; interTrialInterval = .5; n = 20;
 run('Multiattribute_Binary_Task.m');
 %Ternary Task
-%run('Multiattribute_Ternary_Task.m');
+n_t= 10;
+run('Multiattribute_Ternary_Task.m');
