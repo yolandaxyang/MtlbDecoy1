@@ -61,6 +61,19 @@ double LogitProba(int p,int choice,int obs,int num_p, int num_obs, int num_optio
 	return proba;
 };
 
+/*Compute prior probability */
+double Prior(int p,int num_p, int dim_p, double* particles) {
+	double proba = 1.0;
+	for(int d=0;d<dim_p;d++){
+        if(readParticle(particles,p,d,num_p)>0){
+            proba = proba * gsl_ran_chisq_pdf(readParticle(particles,p,d,num_p),2.0);
+        }else{
+            proba = 0;
+        }
+	}
+	return proba;
+};
+
 /* The gateway function */
 void mexFunction( int nlhs, mxArray *plhs[],
                   int nrhs, const mxArray *prhs[])
@@ -142,14 +155,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	//compute sd
 	double * theta_mean = calloc(dim_p,sizeof(double));
 	double * theta_sd = calloc(dim_p, sizeof(double));
-	/*for (int dim = 0; dim < dim_p; dim++) {
-		for (int p = 0; p < num_p; p++) {
-			theta_mean[dim] += particles[dim * num_p + p];
-			theta_sd[dim] += particles[dim * num_p + p] * particles[dim * num_p + p];
-		}
-		theta_sd[dim] = pow((theta_mean[dim] + theta_sd[dim]) / num_p, 0.5);
-		theta_sd[dim] = (theta_sd[dim] < 0.05) ? 0.05 : theta_sd[dim];
-	}*/
 
 	//Mutation
 	for (int m = 0; m < 10; m++) {
@@ -157,16 +162,18 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			for (int dim = 0; dim < dim_p; dim++) {
 				thetaRedraw[num_p * dim + p] = particles[num_p * dim + p] +  gsl_ran_gaussian(rng, 0.02);
 			}
-			double log_mh_ratio_top = 0.0; // log(objModel.PriorPDF(thetaRedraw[i]));
-			double log_mh_ratio_bot = 0.0; // log(objModel.PriorPDF(theta[i]));
-			for (int d = 0; d < num_obs; d++) {
-				log_mh_ratio_top += log(LogitProba(p, (int)obsChoice[d], d, num_p, num_obs, 2, thetaRedraw, obs_x));
-				log_mh_ratio_bot += log(LogitProba(p, (int)obsChoice[d], d, num_p, num_obs, 2, particles, obs_x));
-			}
-			double log_mh_ratio = log_mh_ratio_top - log_mh_ratio_bot;
-			if (log(gsl_rng_uniform(rng)) < log_mh_ratio ) {
-				copyParticle(particles, thetaRedraw, p, p, num_p, dim_p);
-			}
+            if(Prior(p,num_p,dim_p,thetaRedraw)>0){
+                double log_mh_ratio_top = log(Prior(p,num_p, dim_p,thetaRedraw));
+                double log_mh_ratio_bot = log(Prior(p,num_p, dim_p,particles));
+                for (int d = 0; d < num_obs; d++) {
+                    log_mh_ratio_top += log(LogitProba(p, (int)obsChoice[d], d, num_p, num_obs, 2, thetaRedraw, obs_x));
+                    log_mh_ratio_bot += log(LogitProba(p, (int)obsChoice[d], d, num_p, num_obs, 2, particles, obs_x));
+                }
+                double log_mh_ratio = log_mh_ratio_top - log_mh_ratio_bot;
+                if (log(gsl_rng_uniform(rng)) < log_mh_ratio ) {
+                    copyParticle(particles, thetaRedraw, p, p, num_p, dim_p);
+                }
+            }
 		}
 	}
 	

@@ -11,48 +11,22 @@ Screen('TextSize', mainwin, 25);
 [nx, ny, bbox] = DrawFormattedText(mainwin,'Loading', 'center', 'center', 0, [], [], [], [1.5], [],centerRect);
 Screen('Flip',mainwin);
 
-%Listz 
-Titles = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
-Ratings = {'1', '1.5', '2', '2.5', '3', '3.5', '4', '4.5', '5'};
-money = [1 2 3 4 5 6 7 8 9 10];
 
 Chosen = [];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Draw 512 particles from prior
-theta = chi2rnd(4,512,3); %chi2(1) distributed
+theta = chi2rnd(2,512,3); %chi2(2) distributed
 avg_theta = mean(theta);
 avg_hist = avg_theta;
 sd_theta = std(theta);
 sd_hist = sd_theta;
-[xind1,xind2,indifsd] = FindIndif(2,3,theta);
+[xind1,xind2,indifsd] = FindIndif(0.6,0.4,theta);
 
 
 %% Begin experiment
 
-
-for t = 1:n;
-    books = numel(Titles);
-    
-    idx_1 = randi(books);
-    idx_2 = randi(books);
-    
-    if idx_2 == idx_1;
-        idx_2 = randi(books);
-    end
-    
-    idx = [idx_1, idx_2];
-    ix = randperm(2);
-    idx_s = idx(ix);
-    
-    obj1_attr2 = money(randi([1,10]));
-    obj2_attr2 = money(randi([1,10]));
-    
-    if obj1_attr2 == obj2_attr2;
-        obj2_attr2 = money(randi([2,10]));
-    end
-    
-    
+for t = 1:n;   
     %optimal design
     [x1,x2] = OptimQuestionCES(theta);
     x1 = round(x1,1);
@@ -122,7 +96,9 @@ for t = 1:n;
     
     %Compute posterior
     choice_set = [x1,x2];
-    theta = UpdatePriorDistCES( response(t), choice_set , theta );
+    x1_norm = NormalizeX(x1);
+    x2_norm = NormalizeX(x2);
+    theta = UpdatePriorDistCES( response(t), [x1_norm,x2_norm] , theta );
     avg_theta = mean(theta);
     avg_hist = [avg_hist;avg_theta];
     sd_theta = std(theta);
@@ -130,8 +106,8 @@ for t = 1:n;
     fprintf('AVG(theta) %.2f %.2f %.2f\n', avg_theta(1), avg_theta(2), avg_theta(3));
     fprintf('SD(theta) %.2f %.2f %.2f\n', sd_theta(1), sd_theta(2), sd_theta(3));
     
-    %find some indiference value for attr2 given the attr1 are 2 and 3
-    [xind1,xind2,indifsd] = FindIndif(3,6,theta);
+    %find some indiference value for attr2 given the normalized attr1 values are .6 and .4 
+    [xind1,xind2,indifsd] = FindIndif(0.6,0.4,theta);
     fprintf('SD(probachoice) for [%.2f,%.2f] vs [%.2f,%2f] is %4f \n', xind1(1),xind1(2),xind2(1),xind2(2), indifsd);
     
 end
@@ -143,24 +119,29 @@ end
 
 save BinaryTask.mat 
 
-%% Compute indif curve for x= [3 6]
-x_indif = [3 6];
+%% Compute indif curve for u1 = [0.4 0.6]
+u_indif = [0.4 0.6];
+x_norm_indif = NormalizeU(u_indif);
+tmp = NormalizeU([0 0.9]);
+x_norm22_start = tmp(2);
 
 logLogitNum = @(x,beta)(x.^beta(3) * beta(1:2)')^(1/beta(3));
 logProbaChoice1 = @(x1,x2,beta) logLogitNum(x1,beta) - log( exp(logLogitNum(x1,beta))+exp(logLogitNum(x2,beta)) );
 
 for j=1:20
-    for x2_attr1=1:0.2:9
-        objective = @(x22) (logProbaChoice1( x_indif(1,:),[x2_attr1 x22],theta(j,:))-log(0.5))^2;
-        if isinf(objective(9)) == 0
+    for u21=0.05:0.05:0.95
+        tmp =  NormalizeU([u21 0.9]);
+        x_norm21 = tmp(1);
+        objective = @(x22) (logProbaChoice1( x_norm_indif(1,:),[x_norm21 x22],theta(j,:))-log(0.5))^2;
+        if isinf(objective(x_norm22_start)) == 0
             options = optimoptions(@fminunc,'Display','off','Algorithm','quasi-newton');
-            [x2_attr2,fval,exitflag,output] = fminunc(objective,9,options);
-            x_indif = [x_indif;x2_attr1 x2_attr2];
+            [x_norm22,fval,exitflag,output] = fminunc(objective,x_norm22_start,options);
+            x_norm_indif = [x_norm_indif;x_norm21 x_norm22];
         else
-            fprintf('Particle %d is inf at [%.1f,9]\n',j,x2_attr1);
+            fprintf('Particle %d is inf at [%.1f,9]\n',j,x_norm22);
         end
     end
 end
-scatter(x_indif(:,1),x_indif(:,2),'x')
+scatter(x_norm_indif(:,1),x_norm_indif(:,2),'x')
 save(['data' filesep 'Binary-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'Choice_*','Chosen','time');
 save(['data' filesep 'Theta-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'theta');

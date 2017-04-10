@@ -33,8 +33,10 @@ for t=1:n_t ;
     
     %draw an indifference set:
     [x1,x2] = getIndifSet(theta);
+    x1 = x1';
+    x2 = x2';
     %decoy on x1
-    decoy = x1 - [1;1];
+    decoy = x1 - DecoyDistance;
     x = [x1,x2,decoy];
     
     %draw order

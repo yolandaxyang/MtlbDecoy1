@@ -8,9 +8,17 @@ if(exist('data')==0)
 end
 
 %%Experiment Parameters
+global Attribute1Bounds Attribute2Bounds AttributeSpan
 Debug = 1;
-Attribute1Name = 'Sound Quality : ';
-Attribute2Name = 'Loudness : ';
+Attribute1Name = 'Winning probability (%): ';
+Attribute2Name = 'Prize value ($): ';
+Attribute1Bounds = [30 , 70];
+Attribute2Bounds = [5 , 19.5];
+AttributeSpan = [Attribute1Bounds(2)-Attribute1Bounds(1),Attribute2Bounds(2)-Attribute2Bounds(1)];
+DecoyDistance = [2;2]; %Decoy will be xi - Decoydistance;
+
+%%Base functions
+run('NormalizeVars.m');
 
 %% Subject info
 %Prompt to enter subject's details, which will later be used in the save
@@ -45,8 +53,10 @@ Screen('FillRect', mainwin, bgcolor);
 center = [screenrect(3)/2 screenrect(4)/2];
 
 %Binary Task
-ErrorDelay=1; interTrialInterval = .5; n = 20;
-run('Multiattribute_Binary_Task.m');
+n = 20;
+%run('Multiattribute_Binary_Task.m');
+
 %Ternary Task
 n_t= 10;
 run('Multiattribute_Ternary_Task.m');
+sca;
