@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Textboxes sizes and position
 hShiftFromCenter = 400;
-rectWidth = 300;
+rectWidth = 500;
 rectHeight = 200;
 leftRect = [center - [hShiftFromCenter+(rectWidth/2) (rectHeight/2)], center - [hShiftFromCenter-(rectWidth/2) (-rectHeight/2)]];
 rightRect = [center + [hShiftFromCenter+(rectWidth/2) (rectHeight/2)], center + [hShiftFromCenter-(rectWidth/2) (-rectHeight/2)]];
@@ -37,8 +37,6 @@ for t = 1:n;
     str_obj1_attr2 = num2str(x1(2));
     str_obj2_attr2 = num2str(x2(2));
     
-    
-
     
     Screen('TextSize', mainwin, 20);
     textLeft = [Attribute1Name  str_obj1_attr1 '\n' Attribute2Name  str_obj1_attr2 '\nPress Left'];

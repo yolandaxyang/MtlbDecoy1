@@ -1,8 +1,9 @@
+
 %%%%%%%%%%% TERNARY CHOICE TASK
 %% Compute text positions
 hShiftFromCenter = 400;
 vShiftFromCenter = 250;
-rectWidth = 300;
+rectWidth = 500;
 rectHeight = 200;
 leftRect = [center - [hShiftFromCenter+(rectWidth/2) (rectHeight/2)], center - [hShiftFromCenter-(rectWidth/2) (-rectHeight/2)]];
 rightRect = [center + [hShiftFromCenter+(rectWidth/2) (rectHeight/2)], center + [hShiftFromCenter-(rectWidth/2) (-rectHeight/2)]];
@@ -36,8 +37,24 @@ for t=1:n_t ;
     x1 = x1';
     x2 = x2';
     %decoy on x1
-    decoy = x1 - DecoyDistance;
-    x = [x1,x2,decoy];
+    d_min = 0.8;
+    d_max = 0.9;
+    decoydist = (d_max - d_min).*rand(1) + d_min;
+    decoy = (decoydist*x1);
+    
+    x = [x1, x2, decoy];
+   
+    %keep choices stored to be used in double-decoy task
+    x_11(t) = x1(1);
+    x_12(t) = x1(2);
+    x_21(t) = x2(1);
+    x_22(t) = x2(2);
+    decoy_1(t)= decoy(1);
+    decoy_2(t)= decoy(2);
+    
+    x_1 = [x_11', x_12'];
+    x_2 = [x_21', x_22'];
+    decoy = [decoy_1', decoy_2'];
     
     %draw order
     order = randperm(3);
@@ -71,13 +88,13 @@ for t=1:n_t ;
         
         
         if  keyCode(LeftKey)
-            t_choice(t) = 1;
+            dd_choice(t) = 1;
             respToBeMade = false;
         elseif keyCode(UpKey)
-            t_choice(t) = 2;
+            dd_choice(t) = 2;
             respToBeMade = false;
         elseif keyCode(RightKey)
-            t_choice(t)= 3;
+            dd_choice(t)= 3;
             respToBeMade = false;
         elseif keyCode(escKey)
             sca;

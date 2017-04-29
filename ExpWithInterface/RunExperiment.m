@@ -39,7 +39,7 @@ rand('state', sum(100*clock));
 Screen('Preference', 'SkipSyncTests', 1);
 
 KbName('UnifyKeyNames');
-LeftKey=KbName('LeftArrow'); UpKey=KbName('UpArrow'); RightKey = KbName('RightArrow');
+LeftKey=KbName('LeftArrow'); UpKey=KbName('UpArrow'); RightKey = KbName('RightArrow'); DownKey = KbName('DownArrow');
 spaceKey = KbName('space'); escKey = KbName('ESCAPE');
 % corrkey = [37,38,39]; % left up and right arrow, I dont actually know if this bit of code is necessary.
 gray = [127 127 127 ]; white = [ 255 255 255]; black = [ 0 0 0];
@@ -54,7 +54,7 @@ center = [screenrect(3)/2 screenrect(4)/2];
 
 %Binary Task
 n = 20;
-%run('Multiattribute_Binary_Task.m');
+run('Multiattribute_Binary_Task.m');
 
 %Ternary Task
 n_t= 10;
