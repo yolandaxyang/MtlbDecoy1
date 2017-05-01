@@ -7,6 +7,9 @@ if(exist('data')==0)
    mkdir('data') 
 end
 
+%%start parallel pool
+poolobj = gcp;
+
 %%Experiment Parameters
 global Attribute1Bounds Attribute2Bounds AttributeSpan
 Debug = 1;
@@ -16,6 +19,8 @@ Attribute1Bounds = [30 , 70];
 Attribute2Bounds = [5 , 19.5];
 AttributeSpan = [Attribute1Bounds(2)-Attribute1Bounds(1),Attribute2Bounds(2)-Attribute2Bounds(1)];
 DecoyDistance = [2;2]; %Decoy will be xi - Decoydistance;
+
+Model = 'EU'; %Use expected Utility with CRRA. Otherwise use 'CES' for CES with rescaling.
 
 %%Base functions
 run('NormalizeVars.m');
@@ -60,3 +65,11 @@ n = 20;
 n_t= 10;
 run('Multiattribute_Ternary_Task.m');
 sca;
+
+%Double Decoy Task
+run('Multiattribute_DoubleDecoy_Task.m');
+sca;
+
+%Stop Parallel Pool
+delete(poolobj);
+
