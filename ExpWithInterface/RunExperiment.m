@@ -59,7 +59,7 @@ center = [screenrect(3)/2 screenrect(4)/2];
 
 %Binary Task
 n = 20;
-%run('Multiattribute_Binary_Task.m');
+run('Multiattribute_Binary_Task.m');
 
 %Ternary Task
 n_t= 10;
