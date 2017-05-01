@@ -102,7 +102,7 @@ for t = 1:n_t
         
         
     end
-    t_time(t)=toc;
+    dd_time(t)=toc;
     
     WaitSecs(0.5);
     

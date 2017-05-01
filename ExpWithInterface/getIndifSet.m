@@ -1,4 +1,4 @@
-function [ x1out,x2out ] = getIndifSet( theta )
+function [ x1out,x2out ] = getIndifSet( theta, Model )
 %GETINDIFSET Finds 2 options x1 and x2 with expected indiference
 %(denormalized)
 

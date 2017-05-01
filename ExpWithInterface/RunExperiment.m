@@ -7,6 +7,9 @@ if(exist('data')==0)
    mkdir('data') 
 end
 
+%%start parallel pool
+poolobj = gcp;
+
 %%Experiment Parameters
 global Attribute1Bounds Attribute2Bounds AttributeSpan
 Debug = 1;
@@ -16,6 +19,8 @@ Attribute1Bounds = [30 , 70];
 Attribute2Bounds = [5 , 19.5];
 AttributeSpan = [Attribute1Bounds(2)-Attribute1Bounds(1),Attribute2Bounds(2)-Attribute2Bounds(1)];
 DecoyDistance = [2;2]; %Decoy will be xi - Decoydistance;
+
+Model = 'EU'; %Use expected Utility with CRRA. Otherwise use 'CES' for CES with rescaling.
 
 %%Base functions
 run('NormalizeVars.m');
@@ -39,7 +44,7 @@ rand('state', sum(100*clock));
 Screen('Preference', 'SkipSyncTests', 1);
 
 KbName('UnifyKeyNames');
-LeftKey=KbName('LeftArrow'); UpKey=KbName('UpArrow'); RightKey = KbName('RightArrow'); DownKey = KbName('DownArrow');
+LeftKey=KbName('LeftArrow'); UpKey=KbName('UpArrow'); RightKey = KbName('RightArrow');
 spaceKey = KbName('space'); escKey = KbName('ESCAPE');
 % corrkey = [37,38,39]; % left up and right arrow, I dont actually know if this bit of code is necessary.
 gray = [127 127 127 ]; white = [ 255 255 255]; black = [ 0 0 0];
@@ -54,9 +59,17 @@ center = [screenrect(3)/2 screenrect(4)/2];
 
 %Binary Task
 n = 20;
-run('Multiattribute_Binary_Task.m');
+%run('Multiattribute_Binary_Task.m');
 
 %Ternary Task
 n_t= 10;
 run('Multiattribute_Ternary_Task.m');
 sca;
+
+%Double Decoy Task
+run('Multiattribute_DoubleDecoy_Task.m');
+sca;
+
+%Stop Parallel Pool
+delete(poolobj);
+

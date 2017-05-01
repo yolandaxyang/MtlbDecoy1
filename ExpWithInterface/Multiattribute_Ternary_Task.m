@@ -1,4 +1,3 @@
-
 %%%%%%%%%%% TERNARY CHOICE TASK
 %% Compute text positions
 hShiftFromCenter = 400;
@@ -33,7 +32,7 @@ for t=1:n_t ;
     
     
     %draw an indifference set:
-    [x1,x2] = getIndifSet(theta);
+    [x1,x2] = getIndifSet(theta,Model);
     x1 = x1';
     x2 = x2';
     %decoy on x1
@@ -88,13 +87,13 @@ for t=1:n_t ;
         
         
         if  keyCode(LeftKey)
-            dd_choice(t) = 1;
+            t_choice(t) = 1;
             respToBeMade = false;
         elseif keyCode(UpKey)
-            dd_choice(t) = 2;
+            t_choice(t) = 2;
             respToBeMade = false;
         elseif keyCode(RightKey)
-            dd_choice(t)= 3;
+            t_choice(t)= 3;
             respToBeMade = false;
         elseif keyCode(escKey)
             sca;
