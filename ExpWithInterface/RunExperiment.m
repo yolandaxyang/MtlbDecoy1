@@ -1,8 +1,4 @@
 clear all;
-if(~isdeployed)
-  cd(fileparts(which(mfilename)));
-end
-
 if(exist('data')==0)
    mkdir('data') 
 end

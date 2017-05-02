@@ -18,7 +18,7 @@ function [ x1 , x2 , sd ] = FindIndif(u11, u21, particles , Model )
         attr2 = NormalizeU([0.5,0.5]);
     end
         
-        options = optimoptions(@fminunc,'Display','off','Algorithm','quasi-newton');
+        options = optimoptions(@fminunc,'Display','off','Algorithm','quasi-newton','UseParallel',true);
         [attr2,fval,exitflag,output] = fminunc(objective,attr2,options);
         
     if strcmp(Model,'EU')
