@@ -1,5 +1,4 @@
 
-
 %% Compute text positions
 hShiftFromCenter = 400;
 vShiftFromCenter = 250;
@@ -104,7 +103,7 @@ for t = 1:n_t
     end
     dd_time(t)=toc;
     
-
+    dd_target(t) = find(order==1);
     
     WaitSecs(0.5);
     
@@ -113,6 +112,8 @@ for t = 1:n_t
     Screen('Flip',mainwin);
     
     WaitSecs(0.5);
+    
+    
     
 end
 
@@ -124,4 +125,4 @@ end
 KbStrokeWait;
 sca;
 
-save(['data' filesep 'Ternary-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'dd_choiceset','dd_choice','dd_time', 'ix',);
+save(['data' filesep 'Ternary-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'dd_choiceset','dd_choice','dd_time', 'ix', 'dd_target');

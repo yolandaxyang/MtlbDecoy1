@@ -16,18 +16,11 @@ Screen('Flip',mainwin);
 
 
 %%
-t_choiceset = ones(n_t,6) * NaN;
-t_choice = 1:n_t * NaN;
+t_choiceset = zeros(n_t,6);
 
 
 %%
 
-Screen('FillRect', mainwin ,bgcolor);
-Screen('TextSize', mainwin, 18);
-Screen('DrawText',mainwin,['Press any key to start.'] ,center(1)-350,center(2)-70,textcolor);
-Screen('Flip',mainwin );
-
-KbStrokeWait;
 
 for t=1:n_t ;
     
@@ -104,10 +97,12 @@ for t=1:n_t ;
         
     end
     t_time(t)=toc;
+    t_target(t) = find(order==1);
     
     Screen('TextSize', mainwin, 25);
     [nx, ny, bbox] = DrawFormattedText(mainwin,'Loading', 'center', 'center', 0, [], [], [], [1.5], [],centerRect);
     Screen('Flip',mainwin);
+    
     
     
 end
@@ -120,4 +115,4 @@ KbStrokeWait;
 sca;
 
 
-save(['data' filesep 'Ternary-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'t_choiceset','t_choice','t_time');
+save(['data' filesep 'Ternary-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'t_choiceset','t_choice','t_time','t_target');
