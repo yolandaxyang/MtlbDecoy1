@@ -69,7 +69,7 @@ for t = 1:n_t
     order = randperm(4); 
     dd_choiceset(t,1:8) = ([x(:,order(1)); x(:,order(2)); x(:,order(3)); x(:,order(4))]);
    
-end
+
 
     %show alternatives
     Screen('TextSize', mainwin, 20);
