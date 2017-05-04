@@ -1,22 +1,4 @@
-%% Run Experiments
-rand('state', sum(100*clock));
-Screen('Preference', 'SkipSyncTests', 1);
 
-KbName('UnifyKeyNames');
-LeftKey=KbName('LeftArrow'); UpKey=KbName('UpArrow'); RightKey = KbName('RightArrow'); DownKey = KbName('DownArrow');
-spaceKey = KbName('space'); escKey = KbName('ESCAPE');
-% corrkey = [37,38,39]; % left up and right arrow, I dont actually know if this bit of code is necessary.
-gray = [127 127 127 ]; white = [ 255 255 255]; black = [ 0 0 0];
-bgcolor = white; textcolor = black;
-
-%   Screen parameters
-screens = Screen('Screens');
-screenNumber = max(screens);
-[mainwin, screenrect] =  Screen(screenNumber, 'OpenWindow');
-Screen('FillRect', mainwin, bgcolor);
-center = [screenrect(3)/2 screenrect(4)/2];
-
-%%%%%%%%%%% DOUBLE DECOY TASK
 
 %% Compute text positions
 hShiftFromCenter = 400;
@@ -134,7 +116,6 @@ for t = 1:n_t
     
 end
 
-    dd_choiceset = xg'; 
 
     Screen('TextSize', mainwin, 18);
     Screen('DrawText',mainwin,'Thank you!',center(1),center(2),textcolor)
