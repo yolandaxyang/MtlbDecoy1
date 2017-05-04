@@ -1,3 +1,20 @@
+%% Run Experiments
+rand('state', sum(100*clock));
+Screen('Preference', 'SkipSyncTests', 1);
+
+KbName('UnifyKeyNames');
+LeftKey=KbName('LeftArrow'); UpKey=KbName('UpArrow'); RightKey = KbName('RightArrow'); DownKey = KbName('DownArrow');
+spaceKey = KbName('space'); escKey = KbName('ESCAPE');
+% corrkey = [37,38,39]; % left up and right arrow, I dont actually know if this bit of code is necessary.
+gray = [127 127 127 ]; white = [ 255 255 255]; black = [ 0 0 0];
+bgcolor = white; textcolor = black;
+
+%   Screen parameters
+screens = Screen('Screens');
+screenNumber = max(screens);
+[mainwin, screenrect] =  Screen(screenNumber, 'OpenWindow');
+Screen('FillRect', mainwin, bgcolor);
+center = [screenrect(3)/2 screenrect(4)/2];
 
 %%%%%%%%%%% DOUBLE DECOY TASK
 
@@ -18,9 +35,6 @@ Screen('Flip',mainwin);
 
 
 %%
-%t_choiceset = ones(n_t,8) * NaN;
-%t_choice = 1:n_t * NaN;
-
 
 %these are now the indifference pairs used in ternary task listed in vector form
 
@@ -40,6 +54,8 @@ decoy_s = decoy(:,ix);
 % to generate a second decoy halfway (rounded up) between decoy_s and x1_s
 doubledecoy_s = ((x_1s - decoy_s)/2 + decoy_s);
 
+dd_choiceset = zeros(n_t,8);
+
 for t = 1:n_t
    
     x_1 = x_1s(:,t);
@@ -48,11 +64,16 @@ for t = 1:n_t
     ddecoy = doubledecoy_s(:,t);
 
     x = [x_1, x_2, decoy, ddecoy];
-    
+   
     %draw order
     order = randperm(4);
-   % t_choiceset(t,1:8)=round([x(1:2,order(1))',x(1:2,order(2))',x(1:2,order(3))',x(1:2,order(4))],2);
+
     
+    %REMI CHECK THIS FUNCTION - for some reason I get a 
+    dd_choiceset(t,1:8) = ([x(:,order(1)); x(:,order(2)); x(:,order(3)); x(:,order(4))]);
+   
+end
+
     %show alternatives
     Screen('TextSize', mainwin, 20);
     textLeft = [Attribute1Name  num2str(x(1,order(1)),'%.2f') '\n' Attribute2Name num2str(x(2,order(1)),'%.2f') '\nPress Left'];
@@ -104,6 +125,8 @@ for t = 1:n_t
     end
     dd_time(t)=toc;
     
+
+    
     WaitSecs(0.5);
     
     Screen('TextSize', mainwin, 25);
@@ -113,6 +136,8 @@ for t = 1:n_t
     WaitSecs(0.5);
     
 end
+
+    dd_choiceset = xg'; 
 
     Screen('TextSize', mainwin, 18);
     Screen('DrawText',mainwin,'Thank you!',center(1),center(2),textcolor)

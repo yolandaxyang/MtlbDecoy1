@@ -1,3 +1,4 @@
+
 %%%%%%%%%%% TERNARY CHOICE TASK
 %% Compute text positions
 hShiftFromCenter = 400;
