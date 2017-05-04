@@ -66,10 +66,7 @@ for t = 1:n_t
     x = [x_1, x_2, decoy, ddecoy];
    
     %draw order
-    order = randperm(4);
-
-    
-    %REMI CHECK THIS FUNCTION - for some reason I get a 
+    order = randperm(4); 
     dd_choiceset(t,1:8) = ([x(:,order(1)); x(:,order(2)); x(:,order(3)); x(:,order(4))]);
    
 end
@@ -146,3 +143,4 @@ end
 KbStrokeWait;
 sca;
 
+save(['data' filesep 'Ternary-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'dd_choiceset','dd_choice','dd_time', 'ix',);
