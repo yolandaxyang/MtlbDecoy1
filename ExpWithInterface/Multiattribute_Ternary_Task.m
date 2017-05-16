@@ -27,13 +27,13 @@ for t=1:n_t ;
     
     %draw an indifference set:
     [x1,x2] = getIndifSet(theta,Model);
-    x1 = x1';
-    x2 = x2';
+    x1 = ceil(x1');
+    x2 = ceil(x2');
     %decoy on x1
     d_min = 0.8;
     d_max = 0.9;
     decoydist = (d_max - d_min).*rand(1) + d_min;
-    decoy = (decoydist*x1);
+    decoy = ceil((decoydist*x1));
     
     x = [x1, x2, decoy];
    
@@ -49,15 +49,16 @@ for t=1:n_t ;
     x_2 = [x_21', x_22'];
     decoy = [decoy_1', decoy_2'];
     
+
     %draw order
     order = randperm(3);
     t_choiceset(t,1:6)=round([x(1:2,order(1))',x(1:2,order(2))',x(1:2,order(3))'],2);
     
     %show alternatives
     Screen('TextSize', mainwin, 20);
-    textLeft = [Attribute1Name  num2str(x(1,order(1)),'%.2f') '\n' Attribute2Name num2str(x(2,order(1)),'%.2f') '\nPress Left'];
-    textTop = [Attribute1Name  num2str(x(1,order(2)),'%.2f') '\n' Attribute2Name num2str(x(2,order(2)),'%.2f') '\nPress Top'];
-    textRight = [Attribute1Name  num2str(x(1,order(3)),'%.2f') '\n' Attribute2Name num2str(x(2,order(3)),'%.2f') '\nPress Right'];
+    textLeft = [Attribute1Name  num2str(x(1,order(1)),'%.0f') '\n' Attribute2Name num2str(x(2,order(1)),'%.0f') '\nPress Left'];
+    textTop = [Attribute1Name  num2str(x(1,order(2)),'%.0f') '\n' Attribute2Name num2str(x(2,order(2)),'%.0f') '\nPress Top'];
+    textRight = [Attribute1Name  num2str(x(1,order(3)),'%.0f') '\n' Attribute2Name num2str(x(2,order(3)),'%.0f') '\nPress Right'];
     [nx, ny, bbox] = DrawFormattedText(mainwin,textLeft, 'center', 'center', 0, [], [], [], [1.5], [],leftRect);
     [nx, ny, bbox] = DrawFormattedText(mainwin,textTop, 'center', 'center', 0, [], [], [], [1.5], [],topRect);
     [nx, ny, bbox] = DrawFormattedText(mainwin,textRight, 'center', 'center', 0, [], [], [], [1.5], [],rightRect);
@@ -96,8 +97,12 @@ for t=1:n_t ;
         
         
     end
+    
     t_time(t)=toc;
     t_target(t) = find(order==1);
+    t_comp(t) = find(order==2);
+    t_probchosen(t) = x(1,order(t_choice(t)));
+    t_payoff(t) = x(2, order(t_choice(t)));
     
     Screen('TextSize', mainwin, 25);
     [nx, ny, bbox] = DrawFormattedText(mainwin,'Loading', 'center', 'center', 0, [], [], [], [1.5], [],centerRect);
@@ -115,4 +120,4 @@ KbStrokeWait;
 sca;
 
 
-save(['data' filesep 'Ternary-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'t_choiceset','t_choice','t_time','t_target');
+save(['data' filesep 'Ternary-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'t_choiceset','t_choice','t_time','t_target','t_comp', 't_probchosen','t_payoff');

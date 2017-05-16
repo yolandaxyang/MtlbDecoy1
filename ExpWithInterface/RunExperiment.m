@@ -58,7 +58,7 @@ n = 5;
 run('Multiattribute_Binary_Task.m');
 
 %Ternary Task
-n_t= 5;
+n_t= 3;
 run('Multiattribute_Ternary_Task.m');
 sca;
 
@@ -69,3 +69,20 @@ sca;
 %Stop Parallel Pool
 delete(poolobj);
 
+blott= ceil(1 + (length(b_probchosen))*rand(1));
+tlott = ceil(1+(n_t - 1)*rand(1));
+ddlott = ceil(1 + (n_t - 1)*rand(1)); 
+
+b_gamble = [b_probchosen(blott), b_payoff(blott)];
+t_gamble = [t_probchosen(tlott), t_payoff(tlott)];
+dd_gamble = [dd_probchosen(ddlott), dd_payoff(ddlott)];
+
+lott_gen = randi(3);
+
+if lott_gen == 1
+    play = b_gamble
+elseif lott_gen == 2
+    play = t_gamble
+elseif lott_gen == 3
+    play = dd_gamble
+end

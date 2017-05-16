@@ -34,26 +34,28 @@ sd_hist = sd_theta;
 
 %% Begin experiment
 
-for t = 1:n;   
+    
+for t = 1:n ; 
+    
+    if indifsd > 0.05
+        
     %optimal design
     [x1,x2] = OptimQuestionCES(theta,Model);
     x1 = round(x1,1);
     x2 = round(x2,1);
     
-    str_obj1_attr1 = num2str(x1(1));
+    str_obj1_attr1 = num2str (ceil(x1(1)));
     str_obj2_attr1 = num2str(x2(1));
-    str_obj1_attr2 = num2str(x1(2));
+    str_obj1_attr2 = num2str(ceil(x1(2)));
     str_obj2_attr2 = num2str(x2(2));
     
-    
-
     
     Screen('TextSize', mainwin, 20);
     textLeft = [Attribute1Name  str_obj1_attr1 '\n' Attribute2Name  str_obj1_attr2 '\nPress Left'];
     textRight = [Attribute1Name  str_obj2_attr1 '\n' Attribute2Name  str_obj2_attr2 '\nPress Right'];
     [nx, ny, bbox] = DrawFormattedText(mainwin,textLeft, 'center', 'center', 0, [], [], [], [1.5], [],leftRect);
     [nx, ny, bbox] = DrawFormattedText(mainwin,textRight, 'center', 'center', 0, [], [], [], [1.5], [],rightRect);
-
+    
     
     if Debug==1
         Screen('FrameRect', mainwin ,[0 0 255],[leftRect;rightRect]',1);
@@ -66,7 +68,6 @@ for t = 1:n;
     end
     
     Screen('Flip',mainwin);
-    
    
     
     respToBeMade = true;
@@ -82,11 +83,11 @@ for t = 1:n;
         [keyIsDown,secs, keyCode] = KbCheck;
         if  keyCode(LeftKey)
             response(t) = 0;
-            Chosen(t) = 1;
+            b_choice(t) = 1;
             respToBeMade = false;
         elseif keyCode(RightKey)
             response(t)= 1;
-            Chosen(t) = 2;
+            b_choice(t) = 2;
             respToBeMade = false;
         elseif keyCode(escKey)
             sca;
@@ -97,6 +98,11 @@ for t = 1:n;
         WaitSecs(0.1);
         
     end
+    
+    x = [x1', x2'];
+    b_probchosen(t) = x(1,b_choice(t));
+    b_payoff(t) = x(2,b_choice(t));
+    
     
     Screen('TextSize', mainwin, 25);
     [nx, ny, bbox] = DrawFormattedText(mainwin,'Loading', 'center', 'center', 0, [], [], [], [1.5], [],centerRect);
@@ -121,18 +127,24 @@ for t = 1:n;
     display(['Posterior mean : ' ,num2str(avg_theta)]);
     display(['Posterior sd : ' ,num2str(sd_theta) ]);
     
-    %find some indiference value for attr2 given the normalized attr1 values are .6 and .4 
+    %find some indiference value for attr2 given the normalized attr1 values are .6 and .4
     [xind1,xind2,indifsd] = FindIndif(0.6,0.4,theta,Model);
     fprintf('SD(probachoice) for [%.2f,%.2f] vs [%.2f,%2f] is %4f \n', xind1(1),xind1(2),xind2(1),xind2(2), indifsd);
+    
+    elseif indifsd < 0.05
+        break
+    end
     
 end
 
     Screen('TextSize', mainwin, 25);
     Screen('DrawText',mainwin,'Loading',center(1),center(2),textcolor);
     Screen('Flip',mainwin);
+   
     
-
 save BinaryTask.mat 
+
+
 
 %% Compute indif curve for u1 = [0.4 0.6]
 u_indif = [0.4 0.6];

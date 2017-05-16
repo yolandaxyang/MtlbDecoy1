@@ -1,3 +1,24 @@
+%% Run Experiments
+rand('state', sum(100*clock));
+Screen('Preference', 'SkipSyncTests', 1);
+
+KbName('UnifyKeyNames');
+LeftKey=KbName('LeftArrow'); UpKey=KbName('UpArrow'); RightKey = KbName('RightArrow'); DownKey = KbName('DownArrow');
+spaceKey = KbName('space'); escKey = KbName('ESCAPE');
+% corrkey = [37,38,39]; % left up and right arrow, I dont actually know if this bit of code is necessary.
+gray = [127 127 127 ]; white = [ 255 255 255]; black = [ 0 0 0];
+bgcolor = white; textcolor = black;
+
+%   Screen parameters
+screens = Screen('Screens');
+screenNumber = max(screens);
+[mainwin, screenrect] =  Screen(screenNumber, 'OpenWindow');
+Screen('FillRect', mainwin, bgcolor);
+center = [screenrect(3)/2 screenrect(4)/2];
+
+
+
+
 
 %% Compute text positions
 hShiftFromCenter = 400;
@@ -10,9 +31,9 @@ topRect = [ center - [(rectWidth/2) , vShiftFromCenter+(rectHeight/2)] , center 
 centerRect = [center - [(rectWidth/2) (rectHeight/2)], center + [(rectWidth/2) (rectHeight/2)]];
 botRect = [ center + [(rectWidth/2) , vShiftFromCenter+(rectHeight/2)] , center - [(rectWidth/2) , -vShiftFromCenter+(rectHeight/2)] ];
 
-Screen('TextSize', mainwin, 25);
-[nx, ny, bbox] = DrawFormattedText(mainwin,'Loading', 'center', 'center', 0, [], [], [], [1.5], [],centerRect);
-Screen('Flip',mainwin);
+% Screen('TextSize', mainwin, 25);
+% [nx, ny, bbox] = DrawFormattedText(mainwin,'Loading', 'center', 'center', 0, [], [], [], [1.5], [],centerRect);
+% Screen('Flip',mainwin);
 
 
 %%
@@ -33,7 +54,7 @@ decoy_s = decoy(:,ix);
 
 
 % to generate a second decoy halfway (rounded up) between decoy_s and x1_s
-doubledecoy_s = ((x_1s - decoy_s)/2 + decoy_s);
+doubledecoy_s = ceil(((x_1s - decoy_s)/2 + decoy_s));
 
 dd_choiceset = zeros(n_t,8);
 
@@ -47,17 +68,17 @@ for t = 1:n_t
     x = [x_1, x_2, decoy, ddecoy];
    
     %draw order
-    order = randperm(4); 
-    dd_choiceset(t,1:8) = ([x(:,order(1)); x(:,order(2)); x(:,order(3)); x(:,order(4))]);
+    order_d = randperm(4); 
+    dd_choiceset(t,1:8) = ([x(:,order_d(1)); x(:,order_d(2)); x(:,order_d(3)); x(:,order_d(4))]);
    
 
 
     %show alternatives
     Screen('TextSize', mainwin, 20);
-    textLeft = [Attribute1Name  num2str(x(1,order(1)),'%.2f') '\n' Attribute2Name num2str(x(2,order(1)),'%.2f') '\nPress Left'];
-    textTop = [Attribute1Name  num2str(x(1,order(2)),'%.2f') '\n' Attribute2Name num2str(x(2,order(2)),'%.2f') '\nPress Top'];
-    textRight = [Attribute1Name  num2str(x(1,order(3)),'%.2f') '\n' Attribute2Name num2str(x(2,order(3)),'%.2f') '\nPress Right'];
-    textDown = [Attribute1Name  num2str(x(1,order(4)),'%.2f') '\n' Attribute2Name num2str(x(2,order(4)),'%.2f') '\nPress Down'];
+    textLeft = [Attribute1Name  num2str(x(1,order_d(1)),'%.0f') '\n' Attribute2Name num2str(x(2,order_d(1)),'%.2f') '\nPress Left'];
+    textTop = [Attribute1Name  num2str(x(1,order_d(2)),'%.0f') '\n' Attribute2Name num2str(x(2,order_d(2)),'%.2f') '\nPress Top'];
+    textRight = [Attribute1Name  num2str(x(1,order_d(3)),'%.0f') '\n' Attribute2Name num2str(x(2,order_d(3)),'%.2f') '\nPress Right'];
+    textDown = [Attribute1Name  num2str(x(1,order_d(4)),'%.0f') '\n' Attribute2Name num2str(x(2,order_d(4)),'%.2f') '\nPress Down'];
     
     [nx, ny, bbox] = DrawFormattedText(mainwin,textLeft, 'center', 'center', 0, [], [], [], [1.5], [],leftRect);
     [nx, ny, bbox] = DrawFormattedText(mainwin,textTop, 'center', 'center', 0, [], [], [], [1.5], [],topRect);
@@ -103,7 +124,11 @@ for t = 1:n_t
     end
     dd_time(t)=toc;
     
-    dd_target(t) = find(order==1);
+    dd_target(t) = find(order_d==1);
+    dd_comp(t) = find(order_d==2);
+    dd_probchosen(t) = x(1,order_d(dd_choice(t)));
+    dd_payoff(t) = x(2, order_d(dd_choice(t)));
+    
     
     WaitSecs(0.5);
     
@@ -125,4 +150,4 @@ end
 KbStrokeWait;
 sca;
 
-save(['data' filesep 'Ternary-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'dd_choiceset','dd_choice','dd_time', 'ix', 'dd_target');
+save(['data' filesep 'doubledecoy' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'dd_choiceset','dd_choice','dd_time', 'ix', 'dd_target','dd_comp','dd_probchosen','dd_payoff');
