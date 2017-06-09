@@ -7,7 +7,7 @@ function [ x1out,x2out ] = getIndifSet( theta, Model )
     x2_norm = NormalizeU([0.6 0.6]);
     Lbounds = NormalizeU([0 0]);
     Ubounds = NormalizeU([1 1]);
-    while prod(x1_norm-x2_norm) > 0
+    while (prod(x1_norm-x2_norm) > 0 || any([x1_norm x2_norm] > [Ubounds Ubounds]))
         %pick u1 randomly on [0,0.5]x[0.5,1] or [0.5,1]x[0,0.5];
         u1 = rand(1,2) .* 0.5 + [0 0.5];
         u1 = u1(randperm(2));
