@@ -8,6 +8,7 @@ if exist('updatePriorCES.mexw64', 'file')==2
   delete('updatePriorCES.mexw64');
 end
 mex -g -lgsl -lgslcblas -LD:\Dropbox\Dev\Matlab\RyanCliveGitHub\ExpWithInterface updatePriorCES.c
+mex -g -lgsl -lgslcblas -LD:\Dropbox\Dev\Matlab\RyanCliveGitHub\ExpWithInterface evalObjectiveFunction.c
 
 clear functions
 
