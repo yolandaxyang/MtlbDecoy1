@@ -8,7 +8,7 @@ poolobj = gcp;
 
 %%Experiment Parameters
 global Attribute1Bounds Attribute2Bounds AttributeSpan
-Debug = 1;
+Debug = 0;
 Attribute1Name = 'Winning probability (%): ';
 Attribute2Name = 'Prize value ($): ';
 Attribute1Bounds = [30 , 70];
@@ -54,11 +54,11 @@ Screen('FillRect', mainwin, bgcolor);
 center = [screenrect(3)/2 screenrect(4)/2];
 
 %Binary Task
-n = 5;
+n = 20;
 run('Multiattribute_Binary_Task.m');
 
 %Ternary Task
-n_t= 3;
+n_t= 20;
 run('Multiattribute_Ternary_Task.m');
 sca;
 

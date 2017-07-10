@@ -172,5 +172,5 @@ for j=1:10
     end
 end
 scatter(x_indif(:,1),x_indif(:,2),'x')
-save(['data' filesep 'Binary-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'Choice_*','Chosen','time');
+save(['data' filesep 'Binary-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'Choice_*','Chosen','time','b_choice');
 save(['data' filesep 'Theta-' num2str(subid) '-' datestr(datetime('now'),'yyyy-mm-dd-HH.MM.SS') '.mat'],'theta');
