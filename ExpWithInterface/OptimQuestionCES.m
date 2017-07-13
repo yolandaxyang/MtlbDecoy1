@@ -21,12 +21,14 @@ function [ x1, x2 ] = OptimQuestionCES( particles , Model )
     %Test if parallel activated
     pool = gcp;
     if pool.NumWorkers > 1
-        options = optimoptions(@fmincon,'UseParallel',true,'Display','off');
+        options = optimoptions(@fmincon,'UseParallel',true);%,'Display','off');
     else
         options = optimoptions(@fmincon,'Display','off');
     end
-    
-    [x_norm,fval,exitflag,output] = fmincon(objective,x_norm,[],[],[],[],LowerBounds,UpperBounds,[],options);
+    A = [1 -1 0 0; 0 0 -1 1];
+    b = [0 0];
+    [x_norm,fval,exitflag,output] = fmincon(objective,x_norm,A,b,[],[],LowerBounds,UpperBounds,[],options);
+    x_norm = x_norm(randperm(2),:); %randomize position 1 and 2
     
     if strcmp(Model,'EU')
         x1 = x_norm(1,:);
